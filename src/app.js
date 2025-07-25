@@ -15,15 +15,17 @@ app.use(express.json());
 app.use(cors());
 
 app.get('/api/riasec', (req, res) => {
+    const shuffledData = riasecData.sort(() => Math.random() - 0.5);
+
     res.json({
-        message: 'Daftar pertanyaan RIASEC berhasil diambil',
-        description: 'Silakan jawab semua pertanyaan',
-        data: riasecData
+        success: true,
+        message: 'riasec questions retrieved successfully',
+        data: shuffledData
     });
 });
 
 app.post('/api/riasec/submit', (req, res) => {
-    
+
 });
 
 export default app;
