@@ -1,48 +1,16 @@
 import express from 'express';
 import cors from 'cors';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const rawData = fs.readFileSync(path.join(__dirname, 'data', 'riasec.json'));
-const riasecData = JSON.parse(rawData);
+import riasecRoutes from './api/routes/riasec.route.js';
 
 const app = express();
+
 app.use(express.json());
 app.use(cors());
 
-app.get('/api/riasec', (req, res) => {
-    const shuffledData = riasecData.sort(() => Math.random() - 0.5);
+app.use('/api/riasec', riasecRoutes);
 
-    res.json({
-        success: true,
-        message: 'riasec questions retrieved successfully',
-        data: shuffledData
-    });
-});
-
-app.post('/api/riasec/submit', (req, res) => {
-    const { answers, metadata } = req.body;
-
-    const categories = ['R', 'I', 'A', 'S', 'E', 'C'];
-    const normalizedData = [];
-
-    categories.forEach(code => {
-        const filtered = answers.filter(a => a.code === code);
-        const totalValue = filtered.reduce((sum, a) => sum + a.value, 0);
-        const normalized = ((totalValue - filtered.length) / 60 * 100).toFixed(2);
-        normalizedData.push({ code, value: parseFloat(normalized) });
-    });
-
-    return res.json({
-        success: true,
-        message: 'Answers submitted successfully',
-        data: normalizedData,
-        metadata
-    });
+app.get('/', (req, res) => {
+    res.send('API is running...');
 });
 
 export default app;
