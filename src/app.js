@@ -25,7 +25,24 @@ app.get('/api/riasec', (req, res) => {
 });
 
 app.post('/api/riasec/submit', (req, res) => {
+    const { answers, metadata } = req.body;
 
+    const categories = ['R', 'I', 'A', 'S', 'E', 'C'];
+    const normalizedData = [];
+
+    categories.forEach(code => {
+        const filtered = answers.filter(a => a.code === code);
+        const totalValue = filtered.reduce((sum, a) => sum + a.value, 0);
+        const normalized = ((totalValue - filtered.length) / 60 * 100).toFixed(2);
+        normalizedData.push({ code, value: parseFloat(normalized) });
+    });
+
+    return res.json({
+        success: true,
+        message: 'Answers submitted successfully',
+        data: normalizedData,
+        metadata
+    });
 });
 
 export default app;
